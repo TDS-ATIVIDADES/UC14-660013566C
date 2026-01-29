@@ -1,0 +1,41 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cinema-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cinema_db
+      MYSQL_USER: cinema_user
+      MYSQL_PASSWORD: cinema_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cinema-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  java-app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    container_name: cinema-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ..:/workspaces:cached
+      - ~/.m2:/root/.m2:cached
+    working_dir: /workspaces
+    networks:
+      - cinema-network
+    command: sleep infinity
+
+volumes:
+  mysql_data:
+
+networks:
+  cinema-network:
+    driver: bridge
