@@ -1,50 +1,28 @@
 package app.cinema.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "analise")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Analise {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "filme_id", nullable = false)
+    @JsonBackReference
     private Filme filme;
+
+    @Column(columnDefinition = "TEXT")
     private String analise;
+
+    @Column(nullable = false)
     private Integer nota;
-
-    public Analise() {}
-
-    public Analise(Long id, Filme filme, String analise, Integer nota) {
-        this.id = id;
-        this.filme = filme;
-        this.analise = analise;
-        this.nota = nota;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Filme getFilme() {
-        return filme;
-    }
-
-    public void setFilme(Filme filme) {
-        this.filme = filme;
-    }
-
-    public String getAnalise() {
-        return analise;
-    }
-
-    public void setAnalise(String analise) {
-        this.analise = analise;
-    }
-
-    public Integer getNota() {
-        return nota;
-    }
-
-    public void setNota(Integer nota) {
-        this.nota = nota;
-    }
 }

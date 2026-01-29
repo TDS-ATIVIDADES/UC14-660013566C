@@ -1,71 +1,33 @@
 package app.cinema.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.*;
 import java.util.List;
 
+@Entity
+@Table(name = "filme")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Filme {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String titulo;
+
+    @Column(columnDefinition = "TEXT")
     private String sinopse;
+
     private String genero;
+
+    @Column(name = "ano_lancamento")
     private Integer anoLancamento;
+
+    @OneToMany(mappedBy = "filme", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Analise> analises;
-
-    public Filme() {}
-
-    public Filme(Long id, String titulo, String sinopse, String genero, Integer anoLancamento) {
-        this.id = id;
-        this.titulo = titulo;
-        this.sinopse = sinopse;
-        this.genero = genero;
-        this.anoLancamento = anoLancamento;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getSinopse() {
-        return sinopse;
-    }
-
-    public void setSinopse(String sinopse) {
-        this.sinopse = sinopse;
-    }
-
-    public String getGenero() {
-        return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
-
-    public Integer getAnoLancamento() {
-        return anoLancamento;
-    }
-
-    public void setAnoLancamento(Integer anoLancamento) {
-        this.anoLancamento = anoLancamento;
-    }
-
-    public List<Analise> getAnalises() {
-        return analises;
-    }
-
-    public void setAnalises(List<Analise> analises) {
-        this.analises = analises;
-    }
 }
