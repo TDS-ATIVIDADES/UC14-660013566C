@@ -7,22 +7,26 @@
     <div layout:fragment="content">
         <div class="container mt-5">
             <h1>Adicionar Novo Filme</h1>
-            <form th:action="@{/filmes}" method="post" th:object="${filme}">
+            <form th:action="@{/filmes}" method="post" th:object="${filmeDTO}">
                 <div class="mb-3">
                     <label for="titulo" class="form-label">Título</label>
                     <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required>
+                    <div th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="text-danger"></div>
                 </div>
                 <div class="mb-3">
                     <label for="sinopse" class="form-label">Sinopse</label>
-                    <textarea class="form-control" id="sinopse" th:field="*{sinopse}" rows="3" required></textarea>
+                    <textarea class="form-control" id="sinopse" th:field="*{sinopse}" rows="3"></textarea>
+                    <div th:if="${#fields.hasErrors('sinopse')}" th:errors="*{sinopse}" class="text-danger"></div>
                 </div>
                 <div class="mb-3">
                     <label for="genero" class="form-label">Gênero</label>
-                    <input type="text" class="form-control" id="genero" th:field="*{genero}" required>
+                    <input type="text" class="form-control" id="genero" th:field="*{genero}">
+                    <div th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}" class="text-danger"></div>
                 </div>
                 <div class="mb-3">
                     <label for="anoLancamento" class="form-label">Ano de Lançamento</label>
                     <input type="number" class="form-control" id="anoLancamento" th:field="*{anoLancamento}" required>
+                    <div th:if="${#fields.hasErrors('anoLancamento')}" th:errors="*{anoLancamento}" class="text-danger"></div>
                 </div>
                 <button type="submit" class="btn btn-primary">Salvar</button>
                 <a href="/filmes" class="btn btn-secondary">Cancelar</a>
