@@ -7,10 +7,11 @@
     <div layout:fragment="content">
         <div class="container mt-5">
             <h1>Avaliar <span th:text="${filme.titulo}">Filme</span></h1>
-            <form th:action="@{/filmes/{id}/avaliar(id=${filme.id})}" method="post" th:object="${analise}">
+            <form th:action="@{/filmes/{id}/avaliar(id=${filme.id})}" method="post" th:object="${analiseDTO}">
                 <div class="mb-3">
                     <label for="analise" class="form-label">Análise</label>
-                    <textarea class="form-control" id="analise" th:field="*{analise}" rows="4" required></textarea>
+                    <textarea class="form-control" id="analise" th:field="*{analise}" rows="4"></textarea>
+                    <div th:if="${#fields.hasErrors('analise')}" th:errors="*{analise}" class="text-danger"></div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nota (1-5 estrelas)</label>
@@ -36,6 +37,7 @@
                             <label class="btn" for="nota5">⭐⭐⭐⭐⭐</label>
                         </div>
                     </div>
+                    <div th:if="${#fields.hasErrors('nota')}" th:errors="*{nota}" class="text-danger"></div>
                 </div>
                 <button type="submit" class="btn btn-primary">Salvar Análise</button>
                 <a th:href="@{/filmes/{id}(id=${filme.id})}" class="btn btn-secondary">Cancelar</a>

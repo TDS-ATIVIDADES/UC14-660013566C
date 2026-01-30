@@ -6,7 +6,7 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-E34F26?style=for-the-badge&logo=git&logoColor=white)
 ![VSCode](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
-![Java](https://img.shields.io/badge/Java-CC342D?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white)
+![Java](https://img.shields.io/badge/Java-CC342D?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white) ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white)
 ![JUnit5](https://img.shields.io/badge/Junit5-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 ![MySQL](    https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 
@@ -96,9 +96,66 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 - **/analises**: Lista todas as análises
 - **Swagger UI:** http://localhost:8080/swagger-ui.html
 
+## 🔐 Segurança e Autenticação
+
+O sistema implementa autenticação JWT (JSON Web Tokens) exclusivamente para os endpoints da API REST. As páginas web MVC permanecem públicas e não requerem autenticação.
+
+### Geração da Chave Secreta JWT
+
+Para gerar uma chave secreta segura para JWT, use o comando OpenSSL:
+
+```bash
+openssl rand -base64 32
+```
+
+Substitua o valor em `application.properties` (chave `jwt.secret.key`) pela saída gerada. Isso garante uma chave de 256 bits segura para o algoritmo HS256.
+
+### Como Funciona:
+1. **Login**: Envie uma requisição `POST /api/auth/login` com credenciais JSON
+2. **Token JWT**: Receba um token de acesso válido
+3. **Autenticação**: Inclua o token no header `Authorization: Bearer <token>` para acessar APIs protegidas
+
+### Credenciais de Teste:
+- **Username:** `admin`
+- **Password:** `password`
+
+### Exemplo de Uso com curl:
+```bash
+# 1. Obter token
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"password"}'
+
+# 2. Usar token em requisições
+curl -H "Authorization: Bearer <SEU_TOKEN>" \
+  http://localhost:8080/api/filmes
+```
+
+## 📡 Endpoints da API
+
+### Autenticação
+- `POST /api/auth/login` - Login e obtenção de token JWT
+
+### Filmes (Protegidos)
+- `GET /api/filmes` - Listar todos os filmes
+- `GET /api/filmes/{id}` - Detalhes de um filme
+- `POST /api/filmes` - Criar novo filme
+- `PUT /api/filmes/{id}` - Atualizar filme
+- `DELETE /api/filmes/{id}` - Deletar filme
+
+### Análises (Protegidas)
+- `GET /api/analises` - Listar todas as análises
+- `GET /api/analises/{id}` - Detalhes de uma análise
+- `POST /api/analises` - Criar nova análise
+- `PUT /api/analises/{id}` - Atualizar análise
+- `DELETE /api/analises/{id}` - Deletar análise
+
+### Testes com Postman
+[Baixe aqui](Cinema_API_Postman_Collection.json) a coleção para Postman incluída no projeto para testar todos os endpoints com autenticação automática.
+
 ## 🧪 Testes [BÔNUS]
 
-O projeto possui uma suíte completa de testes
+O projeto possui uma suíte completa de testes, incluindo testes unitários, de integração e de segurança/autenticação.
 
 ### Executar Testes
 
@@ -106,11 +163,13 @@ O projeto possui uma suíte completa de testes
 mvn test
 ```
 
-**Cobertura:** Todos os testes passam, validando funcionalidades básicas e casos de erro.
+**Cobertura:** Todos os 28 testes passam, validando funcionalidades básicas, casos de erro e autenticação JWT.
 
 ## Dependências Principais
 <img src="https://img.shields.io/badge/Java-17+-red.svg?style=for-the-badge" alt="Java 17+">
 <img src="https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen.svg?style=for-the-badge" alt="Spring Boot 3.2.0">
+<img src="https://img.shields.io/badge/Spring%20Security-6.2.0-brightgreen.svg?style=for-the-badge" alt="Spring Security 6.2.0">
+<img src="https://img.shields.io/badge/JWT-0.11.5-black.svg?style=for-the-badge" alt="JWT 0.11.5">
 <img src="https://img.shields.io/badge/Maven-3.6+-orange.svg?style=for-the-badge" alt="Maven 3.6+">
 <img src="https://img.shields.io/badge/MySQL+-blue.svg?style=for-the-badge" alt="MySQL">
-<img src="https://img.shields.io/badge/Status-Desenvolvimento-danger.svg?style=for-the-badge" alt="Status: Desenvolviment0">
+<img src="https://img.shields.io/badge/Status-Desenvolvimento-danger.svg?style=for-the-badge" alt="Status: Desenvolvimento">

@@ -2,33 +2,56 @@ package app.cinema.demo.service;
 
 import app.cinema.demo.model.Analise;
 import app.cinema.demo.model.Filme;
+import app.cinema.demo.repository.AnaliseRepository;
+import app.cinema.demo.repository.FilmeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceTest {
+
+    @Mock
+    private FilmeRepository filmeRepository;
+
+    @Mock
+    private AnaliseRepository analiseRepository;
 
     private FilmeService filmeService;
 
     @BeforeEach
     void setUp() {
-        filmeService = new FilmeService();
+        filmeService = new FilmeService(filmeRepository, analiseRepository);
     }
 
     @Test
     void testListarFilmes() {
         // Given
-        Filme filme1 = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme filme2 = new Filme(null, "Filme 2", "Descrição 2", "Gênero 2", 2021);
-        filmeService.salvarFilme(filme1);
-        filmeService.salvarFilme(filme2);
+        Filme filme1 = new Filme();
+        filme1.setId(1L);
+        filme1.setTitulo("Filme 1");
+        filme1.setSinopse("Descrição 1");
+        filme1.setGenero("Gênero 1");
+        filme1.setAnoLancamento(2020);
+        
+        Filme filme2 = new Filme();
+        filme2.setId(2L);
+        filme2.setTitulo("Filme 2");
+        filme2.setSinopse("Descrição 2");
+        filme2.setGenero("Gênero 2");
+        filme2.setAnoLancamento(2021);
+        
+        when(filmeRepository.findAll()).thenReturn(Arrays.asList(filme1, filme2));
 
         // When
         List<Filme> filmes = filmeService.listarFilmes();
@@ -42,11 +65,17 @@ class FilmeServiceTest {
     @Test
     void testBuscarFilmePorId() {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme saved = filmeService.salvarFilme(filme);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
+        
+        when(filmeRepository.findById(1L)).thenReturn(Optional.of(filme));
 
         // When
-        Optional<Filme> found = filmeService.buscarFilmePorId(saved.getId());
+        Optional<Filme> found = filmeService.buscarFilmePorId(1L);
 
         // Then
         assertTrue(found.isPresent());
@@ -55,6 +84,9 @@ class FilmeServiceTest {
 
     @Test
     void testBuscarFilmePorIdNotFound() {
+        // Given
+        when(filmeRepository.findById(999L)).thenReturn(Optional.empty());
+
         // When
         Optional<Filme> found = filmeService.buscarFilmePorId(999L);
 
@@ -65,7 +97,20 @@ class FilmeServiceTest {
     @Test
     void testSalvarFilme() {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
+        Filme filme = new Filme();
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
+        
+        Filme savedFilme = new Filme();
+        savedFilme.setId(1L);
+        savedFilme.setTitulo("Filme 1");
+        savedFilme.setSinopse("Descrição 1");
+        savedFilme.setGenero("Gênero 1");
+        savedFilme.setAnoLancamento(2020);
+        
+        when(filmeRepository.save(any(Filme.class))).thenReturn(savedFilme);
 
         // When
         Filme saved = filmeService.salvarFilme(filme);
@@ -78,53 +123,86 @@ class FilmeServiceTest {
     @Test
     void testAdicionarAnalise() {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme saved = filmeService.salvarFilme(filme);
-        Analise analise = new Analise(null, saved, "Análise boa", 4);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
+        
+        when(filmeRepository.findById(1L)).thenReturn(Optional.of(filme));
+        
+        Analise analise = new Analise();
+        analise.setFilme(filme);
+        analise.setAnalise("Análise boa");
+        analise.setNota(4);
 
         // When
-        filmeService.adicionarAnalise(saved.getId(), analise);
+        filmeService.adicionarAnalise(1L, analise);
 
         // Then
-        Optional<Filme> found = filmeService.buscarFilmePorId(saved.getId());
-        assertTrue(found.isPresent());
-        assertEquals(1, found.get().getAnalises().size());
-        assertEquals("Análise boa", found.get().getAnalises().get(0).getAnalise());
+        verify(analiseRepository).save(analise);
     }
 
     @Test
     void testAdicionarAnaliseNotaInvalidaBaixa() {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme saved = filmeService.salvarFilme(filme);
-        Analise analise = new Analise(null, saved, "Análise boa", 0);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        
+        Analise analise = new Analise();
+        analise.setFilme(filme);
+        analise.setAnalise("Análise boa");
+        analise.setNota(0);
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> filmeService.adicionarAnalise(saved.getId(), analise));
+        assertThrows(IllegalArgumentException.class, () -> filmeService.adicionarAnalise(1L, analise));
     }
 
     @Test
     void testAdicionarAnaliseNotaInvalidaAlta() {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme saved = filmeService.salvarFilme(filme);
-        Analise analise = new Analise(null, saved, "Análise boa", 6);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        
+        Analise analise = new Analise();
+        analise.setFilme(filme);
+        analise.setAnalise("Análise boa");
+        analise.setNota(6);
 
         // When & Then
-        assertThrows(IllegalArgumentException.class, () -> filmeService.adicionarAnalise(saved.getId(), analise));
+        assertThrows(IllegalArgumentException.class, () -> filmeService.adicionarAnalise(1L, analise));
+    }
+
+    @Test
+    void testAdicionarAnaliseFilmeNaoEncontrado() {
+        // Given
+        when(filmeRepository.findById(999L)).thenReturn(Optional.empty());
+        
+        Analise analise = new Analise();
+        analise.setAnalise("Análise boa");
+        analise.setNota(4);
+
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> filmeService.adicionarAnalise(999L, analise));
     }
 
     @Test
     void testListarAnalises() {
         // Given
-        Filme filme1 = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme filme2 = new Filme(null, "Filme 2", "Descrição 2", "Gênero 2", 2021);
-        filmeService.salvarFilme(filme1);
-        filmeService.salvarFilme(filme2);
-        Analise analise1 = new Analise(null, filme1, "Análise 1", 4);
-        Analise analise2 = new Analise(null, filme2, "Análise 2", 5);
-        filmeService.adicionarAnalise(filme1.getId(), analise1);
-        filmeService.adicionarAnalise(filme2.getId(), analise2);
+        Analise analise1 = new Analise();
+        analise1.setId(1L);
+        analise1.setAnalise("Análise 1");
+        analise1.setNota(4);
+        
+        Analise analise2 = new Analise();
+        analise2.setId(2L);
+        analise2.setAnalise("Análise 2");
+        analise2.setNota(5);
+        
+        when(analiseRepository.findAll()).thenReturn(Arrays.asList(analise1, analise2));
 
         // When
         List<Analise> analises = filmeService.listarAnalises();
@@ -133,5 +211,23 @@ class FilmeServiceTest {
         assertEquals(2, analises.size());
         assertEquals("Análise 1", analises.get(0).getAnalise());
         assertEquals("Análise 2", analises.get(1).getAnalise());
+    }
+
+    @Test
+    void testDeletarFilme() {
+        // When
+        filmeService.deletarFilme(1L);
+
+        // Then
+        verify(filmeRepository).deleteById(1L);
+    }
+
+    @Test
+    void testDeletarAnalise() {
+        // When
+        filmeService.deletarAnalise(1L);
+
+        // Then
+        verify(analiseRepository).deleteById(1L);
     }
 }

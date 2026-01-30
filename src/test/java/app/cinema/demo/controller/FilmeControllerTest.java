@@ -2,7 +2,9 @@ package app.cinema.demo.controller;
 
 import app.cinema.demo.model.Analise;
 import app.cinema.demo.model.Filme;
+import app.cinema.demo.repository.FilmeRepository;
 import app.cinema.demo.service.FilmeService;
+import app.cinema.demo.util.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,11 +34,29 @@ class FilmeControllerTest {
     @MockBean
     private FilmeService filmeService;
 
+    @MockBean
+    private FilmeRepository filmeRepository;
+
+    @MockBean
+    private JwtUtil jwtUtil;
+
     @Test
     void testListarFilmes() throws Exception {
         // Given
-        Filme filme1 = new Filme(1L, "Filme 1", "Descrição 1", "Gênero 1", 2020);
-        Filme filme2 = new Filme(2L, "Filme 2", "Descrição 2", "Gênero 2", 2021);
+        Filme filme1 = new Filme();
+        filme1.setId(1L);
+        filme1.setTitulo("Filme 1");
+        filme1.setSinopse("Descrição 1");
+        filme1.setGenero("Gênero 1");
+        filme1.setAnoLancamento(2020);
+        
+        Filme filme2 = new Filme();
+        filme2.setId(2L);
+        filme2.setTitulo("Filme 2");
+        filme2.setSinopse("Descrição 2");
+        filme2.setGenero("Gênero 2");
+        filme2.setAnoLancamento(2021);
+        
         when(filmeService.listarFilmes()).thenReturn(Arrays.asList(filme1, filme2));
 
         // When & Then
@@ -52,13 +72,17 @@ class FilmeControllerTest {
         mockMvc.perform(get("/filmes/novo"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("filmes/form"))
-                .andExpect(model().attributeExists("filme"));
+                .andExpect(model().attributeExists("filmeDTO"));
     }
 
     @Test
     void testSalvarFilme() throws Exception {
         // Given
-        Filme filme = new Filme(null, "Filme 1", "Descrição 1", "Gênero 1", 2020);
+        Filme filme = new Filme();
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
         when(filmeService.salvarFilme(any(Filme.class))).thenReturn(filme);
 
         // When & Then
@@ -75,7 +99,12 @@ class FilmeControllerTest {
     @Test
     void testDetalhesFilme() throws Exception {
         // Given
-        Filme filme = new Filme(1L, "Filme 1", "Descrição 1", "Gênero 1", 2020);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
         when(filmeService.buscarFilmePorId(1L)).thenReturn(Optional.of(filme));
 
         // When & Then
@@ -99,7 +128,12 @@ class FilmeControllerTest {
     @Test
     void testAvaliarFilme() throws Exception {
         // Given
-        Filme filme = new Filme(1L, "Filme 1", "Descrição 1", "Gênero 1", 2020);
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme 1");
+        filme.setSinopse("Descrição 1");
+        filme.setGenero("Gênero 1");
+        filme.setAnoLancamento(2020);
         when(filmeService.buscarFilmePorId(1L)).thenReturn(Optional.of(filme));
 
         // When & Then
@@ -107,14 +141,23 @@ class FilmeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("filmes/avaliar"))
                 .andExpect(model().attributeExists("filme"))
-                .andExpect(model().attributeExists("analise"));
+                .andExpect(model().attributeExists("analiseDTO"));
     }
 
     @Test
     void testAdicionarAnalise() throws Exception {
         // Given
-        Analise analise = new Analise(null, null, "Análise boa", 4);
-        Filme filme = new Filme(1L, "Filme Teste", "Descrição", "Ação", 2020);
+        Analise analise = new Analise();
+        analise.setAnalise("Análise boa");
+        analise.setNota(4);
+        
+        Filme filme = new Filme();
+        filme.setId(1L);
+        filme.setTitulo("Filme Teste");
+        filme.setSinopse("Descrição");
+        filme.setGenero("Ação");
+        filme.setAnoLancamento(2020);
+        
         when(filmeService.buscarFilmePorId(1L)).thenReturn(Optional.of(filme));
         doNothing().when(filmeService).adicionarAnalise(eq(1L), any(Analise.class));
 
