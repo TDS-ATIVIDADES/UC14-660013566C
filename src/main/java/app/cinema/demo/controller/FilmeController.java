@@ -1,5 +1,7 @@
 package app.cinema.demo.controller;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +44,13 @@ public class FilmeController {
 
     @GetMapping("/{id}")
     public String detalhesFilme(@PathVariable Long id, Model model) {
-        filmeService.buscarFilmePorId(id).ifPresent(filme -> model.addAttribute("filme", filme));
-        return "filmes/detalhes";
+        Optional<Filme> filmeOpt = filmeService.buscarFilmePorId(id);
+        if (filmeOpt.isPresent()) {
+            model.addAttribute("filme", filmeOpt.get());
+            return "filmes/detalhes";
+        } else {
+            return "redirect:/filmes";
+        }
     }
 
     @GetMapping("/{id}/avaliar")
@@ -55,6 +62,10 @@ public class FilmeController {
 
     @PostMapping("/{id}/avaliar")
     public String adicionarAnalise(@PathVariable Long id, @ModelAttribute Analise analise) {
+        Optional<Filme> filmeOpt = filmeService.buscarFilmePorId(id);
+        if (filmeOpt.isEmpty()) {
+            throw new IllegalArgumentException("Filme não encontrado");
+        }
         filmeService.adicionarAnalise(id, analise);
         return "redirect:/filmes/" + id;
     }
