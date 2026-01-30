@@ -1,0 +1,231 @@
+{
+  "info": {
+    "name": "Cinema API Collection",
+    "description": "Coleção completa para testar a API do Cinema",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"user\",\n    \"password\": \"pass\",\n    \"expirationMinutes\": 60\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Fazer login e obter token JWT"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Filmes",
+      "item": [
+        {
+          "name": "Listar Filmes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/filmes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "filmes"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Filme por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/filmes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "filmes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar Filme",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"titulo\": \"Novo Filme\",\n    \"sinopse\": \"Sinopse do filme\",\n    \"genero\": \"Ação\",\n    \"anoLancamento\": 2023\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/filmes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "filmes"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Filme",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"titulo\": \"Filme Atualizado\",\n    \"sinopse\": \"Sinopse atualizada\",\n    \"genero\": \"Drama\",\n    \"anoLancamento\": 2024\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/filmes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "filmes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Filme",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/filmes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "filmes", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Análises",
+      "item": [
+        {
+          "name": "Listar Análises",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analises",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analises"]
+            }
+          }
+        },
+        {
+          "name": "Criar Análise",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"filme\": {\"id\": 1},\n    \"analise\": \"Ótimo filme!\",\n    \"nota\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/analises",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analises"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Análise",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analises/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analises", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
