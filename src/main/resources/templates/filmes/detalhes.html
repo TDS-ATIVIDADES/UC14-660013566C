@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <title>Detalhes do Filme</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1 th:text="${filme.titulo}">Título do Filme</h1>
+            <p th:text="${filme.sinopse}">Sinopse</p>
+            <p><strong>Gênero:</strong> <span th:text="${filme.genero}">Gênero</span></p>
+            <p><strong>Ano:</strong> <span th:text="${filme.anoLancamento}">Ano</span></p>
+            <h3 class="mt-3 mb-3">Análises</h3>
+            <div class="alert alert-info" role="alert" th:if="${#lists.isEmpty(filme.analises)}">
+                Nenhuma análise disponível.
+
+            </div>
+            <div class="alert alert-info" role="alert" th:each="analise : ${filme.analises}">
+                <h5 th:text="${analise.analise}">Análise</h5>
+                <p>
+                    <strong>Nota:</strong>
+                    <span th:text="${#strings.repeat('⭐', analise.nota)}"></span>
+                </p>
+            </div>
+            <a th:href="@{/filmes/{id}/avaliar(id=${filme.id})}" class="btn btn-warning">Adicionar Análise</a>
+            <a href="/filmes" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>

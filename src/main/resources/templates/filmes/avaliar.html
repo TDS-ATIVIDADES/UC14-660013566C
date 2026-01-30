@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <title>Avaliar Filme</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>Avaliar <span th:text="${filme.titulo}">Filme</span></h1>
+            <form th:action="@{/filmes/{id}/avaliar(id=${filme.id})}" method="post" th:object="${analise}">
+                <div class="mb-3">
+                    <label for="analise" class="form-label">Análise</label>
+                    <textarea class="form-control" id="analise" th:field="*{analise}" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nota (1-5 estrelas)</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="btn-check" id="nota1" th:field="*{nota}" th:value="1" required>
+                            <label class="btn" for="nota1">⭐</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="btn-check" id="nota2" th:field="*{nota}" th:value="2">
+                            <label class="btn" for="nota2">⭐⭐</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="btn-check" id="nota3" th:field="*{nota}" th:value="3">
+                            <label class="btn" for="nota3">⭐⭐⭐</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="btn-check" id="nota4" th:field="*{nota}" th:value="4">
+                            <label class="btn" for="nota4">⭐⭐⭐⭐</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="btn-check" id="nota5" th:field="*{nota}" th:value="5">
+                            <label class="btn" for="nota5">⭐⭐⭐⭐⭐</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Análise</button>
+                <a th:href="@{/filmes/{id}(id=${filme.id})}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

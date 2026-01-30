@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.thymeleaf.org" layout:decorate="~{layout}">
+<head>
+    <title>Lista de Filmes</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-5">
+            <h1>Lista de Filmes</h1>
+            <a href="/filmes/novo" class="btn btn-success mb-3 float-right">
+                Adicionar
+            </a>
+            <div class="row">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:if="${#lists.isEmpty(filmes)}">
+                        Nenhum filme cadastrado.
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="filme : ${filmes}">
+                        <div>
+                            <a class="text-decoration-none fw-bold" 
+                                th:href="@{/filmes/{id}(id=${filme.id})}"
+                                th:text="${filme.titulo}">
+                            </a>
+                            <small class="text-muted"
+                                th:text="${filme.genero} + ' ' + ${filme.anoLancamento}">
+                            </small>
+                        </div>
+                        <a th:href="@{/filmes/{id}/avaliar(id=${filme.id})}" 
+                            class="btn btn-outline-secondary">
+                            Avaliar
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
